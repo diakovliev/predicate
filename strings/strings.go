@@ -5,15 +5,19 @@ import (
 	"strings"
 )
 
-type Predicate func(s string) bool
+func Empty() func(s string) bool {
+	return func(s string) bool {
+		return len(s) == 0
+	}
+}
 
-func Contains(test string) Predicate {
+func Contains(test string) func(s string) bool {
 	return func(s string) bool {
 		return strings.Contains(s, test)
 	}
 }
 
-func ContainsAny(test ...string) Predicate {
+func ContainsAny(test ...string) func(s string) bool {
 	return func(s string) bool {
 		for _, v := range test {
 			if Contains(v)(s) {
@@ -24,7 +28,7 @@ func ContainsAny(test ...string) Predicate {
 	}
 }
 
-func ContainsAll(test ...string) Predicate {
+func ContainsAll(test ...string) func(s string) bool {
 	return func(s string) bool {
 		for _, v := range test {
 			if !Contains(v)(s) {
@@ -35,25 +39,25 @@ func ContainsAll(test ...string) Predicate {
 	}
 }
 
-func HasPrefix(test string) Predicate {
+func HasPrefix(test string) func(s string) bool {
 	return func(s string) bool {
 		return strings.HasPrefix(s, test)
 	}
 }
 
-func HasSuffix(test string) Predicate {
+func HasSuffix(test string) func(s string) bool {
 	return func(s string) bool {
 		return strings.HasSuffix(s, test)
 	}
 }
 
-func Matches(test regexp.Regexp) Predicate {
+func Matches(test *regexp.Regexp) func(s string) bool {
 	return func(s string) bool {
 		return test.MatchString(s)
 	}
 }
 
-func MatchesAny(test ...regexp.Regexp) Predicate {
+func MatchesAny(test ...*regexp.Regexp) func(s string) bool {
 	return func(s string) bool {
 		for _, v := range test {
 			if Matches(v)(s) {
@@ -64,7 +68,7 @@ func MatchesAny(test ...regexp.Regexp) Predicate {
 	}
 }
 
-func MatchesAll(test ...regexp.Regexp) Predicate {
+func MatchesAll(test ...*regexp.Regexp) func(s string) bool {
 	return func(s string) bool {
 		for _, v := range test {
 			if !Matches(v)(s) {

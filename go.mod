@@ -1,4 +1,4 @@
-module github.com/diakovliev/go-predicates
+module github.com/diakovliev/predicate
 
 go 1.23.0
 
