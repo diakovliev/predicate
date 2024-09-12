@@ -1,4 +1,4 @@
-package predicates
+package predicate
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ type row[T any] struct {
 	o bool
 }
 
-func (r row[T]) I() (ret []Predicate[T]) {
-	ret = make([]Predicate[T], len(r.i))
+func (r row[T]) I() (ret []func(T) bool) {
+	ret = make([]func(T) bool, len(r.i))
 	for i, v := range r.i {
 		ret[i] = Const[T](v)
 	}
@@ -87,7 +87,7 @@ var ANYBUT = []row[int]{
 func TestComposers(t *testing.T) {
 	type testCase struct {
 		name     string
-		composer Composer[int]
+		composer func(...func(int) bool) func(int) bool
 		cases    []row[int]
 	}
 	tests := []testCase{

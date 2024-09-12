@@ -1,7 +1,7 @@
-package predicates
+package predicate
 
 // Composer is a function that takes a variadic list of predicates and returns a single predicate.
-type Composer[T any] func(...Predicate[T]) Predicate[T]
+// type Composer[T any] func(...func(T) bool) func(T) bool
 
 // And returns a new predicate that is the logical AND of the given predicates.
 // The resulting predicate will return true if all of the given predicates return true.
@@ -13,7 +13,7 @@ type Composer[T any] func(...Predicate[T]) Predicate[T]
 //   - And() == True
 //   - And(True) == True
 //   - And(False) == False
-func And[T any](predicates ...Predicate[T]) Predicate[T] {
+func And[T any](predicates ...func(T) bool) func(T) bool {
 	return func(t T) (and bool) {
 		and = true
 		for _, predicate := range predicates {
@@ -33,7 +33,7 @@ func And[T any](predicates ...Predicate[T]) Predicate[T] {
 //   - Or() == False
 //   - Or(True) == True
 //   - Or(False) == False
-func Or[T any](predicates ...Predicate[T]) Predicate[T] {
+func Or[T any](predicates ...func(T) bool) func(T) bool {
 	return func(t T) (or bool) {
 		for _, predicate := range predicates {
 			or = or || predicate(t)
@@ -49,7 +49,7 @@ func Or[T any](predicates ...Predicate[T]) Predicate[T] {
 //   - Xor() == False
 //   - Xor(True) == True
 //   - Xor(False) == False
-func Xor[T any](predicates ...Predicate[T]) Predicate[T] {
+func Xor[T any](predicates ...func(T) bool) func(T) bool {
 	return func(t T) bool {
 		// In general XOR operation is equivelent to counting the number
 		// of true inputs by mod 2. So...
@@ -72,7 +72,7 @@ func Xor[T any](predicates ...Predicate[T]) Predicate[T] {
 //   - AnyBut() == False
 //   - AnyBut(True) == False
 //   - AnyBut(False) == False
-func AnyBut[T any](predicates ...Predicate[T]) Predicate[T] {
+func AnyBut[T any](predicates ...func(T) bool) func(T) bool {
 	return func(t T) bool {
 		and := true
 		or := false

@@ -1,8 +1,12 @@
 package slices
 
-type Predicate[T comparable] func(s []T) bool
+func Empty[T any]() func(s []T) bool {
+	return func(s []T) bool {
+		return len(s) == 0
+	}
+}
 
-func Contains[T comparable](test T) Predicate[T] {
+func Contains[T comparable](test T) func(s []T) bool {
 	return func(s []T) (ret bool) {
 		for _, v := range s {
 			if v == test {
@@ -14,7 +18,7 @@ func Contains[T comparable](test T) Predicate[T] {
 	}
 }
 
-func ContainsAny[T comparable](test ...T) Predicate[T] {
+func ContainsAny[T comparable](test ...T) func(s []T) bool {
 	return func(s []T) (ret bool) {
 		for _, v := range test {
 			if Contains(v)(s) {
@@ -26,7 +30,7 @@ func ContainsAny[T comparable](test ...T) Predicate[T] {
 	}
 }
 
-func ContainsAll[T comparable](test ...T) Predicate[T] {
+func ContainsAll[T comparable](test ...T) func(s []T) bool {
 	return func(s []T) (ret bool) {
 		for _, v := range test {
 			if !Contains(v)(s) {
@@ -38,7 +42,7 @@ func ContainsAll[T comparable](test ...T) Predicate[T] {
 	}
 }
 
-func HasPrefix[T comparable](test []T) Predicate[T] {
+func HasPrefix[T comparable](test []T) func(s []T) bool {
 	return func(s []T) (ret bool) {
 		if len(s) < len(test) {
 			return
@@ -53,7 +57,7 @@ func HasPrefix[T comparable](test []T) Predicate[T] {
 	}
 }
 
-func HasSuffix[T comparable](test []T) Predicate[T] {
+func HasSuffix[T comparable](test []T) func(s []T) bool {
 	return func(s []T) (ret bool) {
 		if len(s) < len(test) {
 			return
